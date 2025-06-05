@@ -15,23 +15,28 @@ class UsersRepository implements IUsersRepository {
     email
   }: CreateUserDTO, token: string, createdById: string): Promise<UserEntity> {
     return await prisma.users.create({
-    data: {
-    name,
-    birthDate,
-    contact,
-    nationalId,
-    email,
-    password,
-    token,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isDeleted: false,
-    createdBy: {
-      connect: { id: createdById }
-    }
-  }
+      data: {
+        name,
+        birthDate,
+        contact,
+        nationalId,
+        email,
+        password,
+        token,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isDeleted: false,
+        createdBy: {
+          connect: { id: createdById }
+        }
+      }
     });
   }
+  async findById(id: string): Promise<UserEntity> {
+    const user = await prisma.users.findUnique({
+      where: { id },
+    });
+    return user;
+  }
 }
-
 export { UsersRepository };
