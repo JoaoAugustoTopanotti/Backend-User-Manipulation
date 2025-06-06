@@ -11,6 +11,10 @@ class CreateUserUseCase {
         private usersRepository: IUsersRepository,
     ) {}
     async execute(newUser: CreateUserDTO, token:string, createdById:string): Promise<UserEntity> {
+        const existingUser = await this.usersRepository.findByEmail(newUser.email);
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
         const user = await this.usersRepository.create(newUser, token, createdById);
         return user;
     }

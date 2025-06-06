@@ -8,8 +8,6 @@ export class CreateUserController {
             const createUserDTO: CreateUserDTO = request.body;
 
             const {token, user} = request.headers;
-            console.log(request.params);
-
 
             const createUserUseCase = container.resolve(CreateUserUseCase);
 
