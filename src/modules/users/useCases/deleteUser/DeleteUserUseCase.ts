@@ -1,5 +1,3 @@
-import { DeleteUserDTO } from "modules/users/dtos/DeleteUserDTO";
-import { UserEntity } from "modules/users/entities/UserEntity";
 import { IUsersRepository } from "modules/users/repositories/IUsersRepository";
 import { inject, injectable } from "tsyringe";
 
@@ -10,17 +8,9 @@ class DeleteUserUseCase {
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
     ) {}
-    async execute(deletedUser: DeleteUserDTO, deletedById: string): Promise<UserEntity> {
-        const userId = await this.usersRepository.findById(deletedUser.id)
-        if (!userId) {
-            throw new Error('User not found');
-        }
-        if (userId.isDeleted) {
-            throw new Error('User already deleted');
-        }
-        const user = await this.usersRepository.delete(deletedUser, deletedById);
-        return user;
+    async execute(id:string, deletedById: string): Promise<void> {
+        const user = await this.usersRepository.remove(id, deletedById);
     }
 }
 
-export { DeleteUserUseCase }
+export { DeleteUserUseCase };

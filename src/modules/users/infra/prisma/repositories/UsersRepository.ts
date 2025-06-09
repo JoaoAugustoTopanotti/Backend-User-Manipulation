@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { CreateUserDTO } from 'modules/users/dtos/CreateUserDTO';
-import { DeleteUserDTO } from 'modules/users/dtos/DeleteUserDTO';
 import { UpdateUserDTO } from 'modules/users/dtos/UpdateUserDTO';
 import { UserEntity } from 'modules/users/entities/UserEntity';
 import { IUsersRepository } from 'modules/users/repositories/IUsersRepository';
+import { IRequestWithPagination } from 'utils/IRequestWithPagination';
 
 const prisma = new PrismaClient();
 
@@ -74,27 +74,77 @@ class UsersRepository implements IUsersRepository {
       }
     });
   }
-  async delete({
-    id,
-  }: DeleteUserDTO, deletedById: string): Promise<UserEntity> {
-    const user = {
-      id,
-      isDeleted: true,
-      deletedAt: new Date(),
-      updatedAt: new Date(),
-    }
-    return await prisma.users.update({
+  async remove(id: string, deletedById: string): Promise<void> {
+    const deletedUser = await prisma.users.update({ 
       where: { id },
       data: {
-        ...user,
+        isDeleted: true,
+        deletedAt: new Date(),
+        updatedAt: new Date(),
         deletedBy: {
           connect: { id: deletedById }
         },
         updatedBy: {
-          connect: { id: deletedById}
-        }
-      }
+          connect: { id: deletedById }
+        } 
+      },
     });
+  }
+  async list({
+    page = 1,
+    take = 10,
+    search,
+    orderBy
+  }: IRequestWithPagination): Promise<{ data: UserEntity[]; total: number; totalPages: number }> {
+    const offset = (page - 1) * take;
+    const whereClause = search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive
+              }
+            },
+            {
+              contact: {
+                startsWith: search
+              }
+            },
+            {
+              email: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive
+              }
+            }
+          ]
+        }
+      : undefined;
+    const orderByClause = orderBy
+      ? {
+          [orderBy.field]: orderBy.direction
+        }
+      : {
+          name: 'asc' as const
+        };
+
+    const [users, total] = await Promise.all([
+      prisma.users.findMany({
+        skip: offset,
+        take,
+        where: whereClause,
+        orderBy: orderByClause
+      }),
+      prisma.users.count({ where: whereClause }) as Promise<number>
+    ]);
+
+    const totalPages = Math.ceil(total / take);
+
+    return {
+      data: users as UserEntity[],
+      total,
+      totalPages
+    };
   }
 }
 export { UsersRepository };
