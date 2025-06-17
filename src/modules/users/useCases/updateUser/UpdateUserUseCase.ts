@@ -12,7 +12,13 @@ class UpdateUserUseCase {
         private usersRepository: IUsersRepository,
     ) { }
     async execute(updatedUser: UpdateUserDTO, token: string, updatedById: string, id: string): Promise<UserEntity> {
-        const userId = await this.usersRepository.findById(updatedUser.id);
+        console.log("updatedUser", updatedUser)
+        console.log("token", token)
+        console.log("updatedById", updatedById)
+        console.log("id", id)
+        
+        const userId = await this.usersRepository.findById(id);
+        console.log("userId", userId)
         const valueToCompare = {
             id: userId.id,
             name: userId.name,

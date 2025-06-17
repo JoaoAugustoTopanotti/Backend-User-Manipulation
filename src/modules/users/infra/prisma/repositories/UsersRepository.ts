@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { CreateUserDTO } from 'modules/users/dtos/CreateUserDTO';
 import { UpdateUserDTO } from 'modules/users/dtos/UpdateUserDTO';
 import { UserEntity } from 'modules/users/entities/UserEntity';
+import { IUserDTO } from 'modules/users/interface/IUserDTO';
 import { IUsersRepository } from 'modules/users/repositories/IUsersRepository';
 import { IRequestWithPagination } from 'utils/IRequestWithPagination';
 
@@ -42,7 +43,7 @@ class UsersRepository implements IUsersRepository {
   }
   async findByEmail(email: string): Promise<UserEntity> {
     const user = await prisma.users.findUnique({
-      where: { email }, 
+      where: { email },
     })
     return user;
   }
@@ -54,20 +55,20 @@ class UsersRepository implements IUsersRepository {
     password,
   }: UpdateUserDTO, token: string, updatedById: string, id: string): Promise<UserEntity> {
     const user = {
-        id,
-        name,
-        contact,
-        nationalId,
-        birthDate,
-        password,
-        updatedAt: new Date(),
-        isDeleted: false,
+      id,
+      name,
+      contact,
+      nationalId,
+      birthDate,
+      password,
+      updatedAt: new Date(),
+      isDeleted: false,
     }
+    console.log("User update", user)
     return await prisma.users.update({
       where: { id },
       data: {
         ...user,
-        token,
         updatedBy: {
           connect: { id: updatedById }
         }
@@ -75,7 +76,7 @@ class UsersRepository implements IUsersRepository {
     });
   }
   async remove(id: string, deletedById: string): Promise<void> {
-    const deletedUser = await prisma.users.update({ 
+    const deletedUser = await prisma.users.update({
       where: { id },
       data: {
         isDeleted: true,
@@ -86,7 +87,7 @@ class UsersRepository implements IUsersRepository {
         },
         updatedBy: {
           connect: { id: deletedById }
-        } 
+        }
       },
     });
   }
@@ -95,45 +96,54 @@ class UsersRepository implements IUsersRepository {
     take = 10,
     search,
     orderBy
-  }: IRequestWithPagination): Promise<{ data: UserEntity[]; total: number; totalPages: number }> {
+  }: IRequestWithPagination): Promise<{ data: IUserDTO[]; total: number; totalPages: number }> {
     const offset = (page - 1) * take;
     const whereClause = search
       ? {
-          OR: [
-            {
-              name: {
-                contains: search,
-                mode: Prisma.QueryMode.insensitive
-              }
-            },
-            {
-              contact: {
-                startsWith: search
-              }
-            },
-            {
-              email: {
-                contains: search,
-                mode: Prisma.QueryMode.insensitive
-              }
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive
             }
-          ]
-        }
+          },
+          {
+            contact: {
+              startsWith: search
+            }
+          },
+          {
+            email: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive
+            }
+          }
+        ]
+      }
       : undefined;
     const orderByClause = orderBy
       ? {
-          [orderBy.field]: orderBy.direction
-        }
+        [orderBy.field]: orderBy.direction
+      }
       : {
-          name: 'asc' as const
-        };
+        name: 'asc' as const
+      };
 
     const [users, total] = await Promise.all([
       prisma.users.findMany({
         skip: offset,
         take,
         where: whereClause,
-        orderBy: orderByClause
+        orderBy: orderByClause,
+        omit: {
+          deletedAt: true,
+          isDeleted: true,
+          updatedAt: true,
+          createdAt: true,
+          createdById: true,
+          updatedById: true,
+          deletedById: true,
+        }
       }),
       prisma.users.count({ where: whereClause }) as Promise<number>
     ]);
@@ -141,10 +151,20 @@ class UsersRepository implements IUsersRepository {
     const totalPages = Math.ceil(total / take);
 
     return {
-      data: users as UserEntity[],
+      data: users,
       total,
-      totalPages
+      totalPages,
     };
+  };
+  async findTokenById(id: string): Promise<string | null> {
+    console.log("Id", id)
+    const user = await prisma.users.findUnique({
+      where: { id },
+      select: { token: true },
+    });
+    console.log("User", user)
+
+    return user?.token ?? null;
   }
 }
 export { UsersRepository };

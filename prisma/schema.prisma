@@ -21,7 +21,7 @@ model Users {
   nationalId String
   email      String   @unique
   password   String
-  token      String
+  token      String   @unique
   createdAt  DateTime
   updatedAt  DateTime
   deletedAt  DateTime?

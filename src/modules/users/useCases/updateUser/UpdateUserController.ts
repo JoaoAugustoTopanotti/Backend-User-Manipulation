@@ -3,7 +3,7 @@ import { container } from "tsyringe";
 import { Request, Response } from "express";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
 
-export class UpdateUserController {
+export class  UpdateUserController {
     async handle(request: Request, response: Response): Promise<Response> {
         try {
             const updateUserDTO: UpdateUserDTO = request.body;

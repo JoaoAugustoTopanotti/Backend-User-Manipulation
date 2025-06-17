@@ -1,6 +1,6 @@
 import { IsDate, IsEmail, IsString, IsStrongPassword, IsUUID } from "class-validator";
 
-export class UpdateUserDTO {
+export class  UpdateUserDTO {
 
     @IsUUID()
     id: string;
