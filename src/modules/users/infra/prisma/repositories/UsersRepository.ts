@@ -17,23 +17,28 @@ class UsersRepository implements IUsersRepository {
     password,
     email
   }: CreateUserDTO, token: string, createdById: string): Promise<UserEntity> {
-    return await prisma.users.create({
-      data: {
-        name,
-        birthDate,
-        contact,
-        nationalId,
-        email,
-        password,
-        token,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isDeleted: false,
-        createdBy: {
-          connect: { id: createdById }
+    try {
+      return await prisma.users.create({
+        data: {
+          name,
+          birthDate,
+          contact,
+          nationalId,
+          email,
+          password,
+          token,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isDeleted: false,
+          createdBy: {
+            connect: { id: createdById }
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Erro ao criar usuário no banco:", error);
+      throw error;
+    }
   }
   async findById(id: string): Promise<UserEntity> {
     const user = await prisma.users.findUnique({
