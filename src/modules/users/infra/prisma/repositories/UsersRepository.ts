@@ -81,20 +81,27 @@ class UsersRepository implements IUsersRepository {
     });
   }
   async remove(id: string, deletedById: string): Promise<void> {
-    const deletedUser = await prisma.users.update({
-      where: { id },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-        deletedBy: {
-          connect: { id: deletedById }
+    try {
+      const deletedUser = await prisma.users.update({
+        where: { id },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+          deletedBy: {
+            connect: { id: deletedById }
+          },
+          updatedBy: {
+            connect: { id: deletedById }
+          }
         },
-        updatedBy: {
-          connect: { id: deletedById }
-        }
-      },
-    });
+      });
+
+      console.log("Usuário marcado como deletado com sucesso:", deletedUser);
+    } catch (error) {
+      console.error("Erro ao tentar deletar usuário:", error);
+      throw error; // relança o erro, se você quiser tratar em outro lugar também
+    }
   }
   async list({
     page = 1,
@@ -142,7 +149,6 @@ class UsersRepository implements IUsersRepository {
         orderBy: orderByClause,
         omit: {
           deletedAt: true,
-          isDeleted: true,
           updatedAt: true,
           createdAt: true,
           createdById: true,

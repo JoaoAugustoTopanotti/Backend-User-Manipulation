@@ -3,6 +3,7 @@ import { IUsersRepository } from "modules/users/repositories/IUsersRepository";
 import { inject, injectable } from "tsyringe";
 import { IRequestWithPagination } from "utils/IRequestWithPagination";
 import { PrismaClient } from '@prisma/client';
+import { IUserDTO } from "modules/users/interface/IUserDTO";
 
 
 const prisma = new PrismaClient();
@@ -13,7 +14,7 @@ class ListUserUseCase {
         @inject("UsersRepository")
         private usersRepoitory: IUsersRepository,
     ) { }
-    async execute(request: IRequestWithPagination): Promise<{data: UserEntity[]; total: number; totalPages: number}> {
+    async execute(request: IRequestWithPagination): Promise<{data: IUserDTO[]; total: number; totalPages: number}> {
         const { page = 1, take = 10 } = request;
         const users = await this.usersRepoitory.list({
             page,
