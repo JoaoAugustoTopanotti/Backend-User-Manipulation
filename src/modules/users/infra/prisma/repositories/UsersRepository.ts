@@ -104,13 +104,18 @@ class UsersRepository implements IUsersRepository {
     }
   }
   async list({
-    page = 1,
-    take = 10,
+    page,
+    take ,
     search,
     orderBy
   }: IRequestWithPagination): Promise<{ data: IUserDTO[]; total: number; totalPages: number }> {
     const offset = (page - 1) * take;
-    const whereClause = search
+    const baseFilter = {
+      isDeleted: false,
+      id: { not: "dab3e7ab-9569-48c7-ae2c-52ef2596b251" }
+    };
+
+    const searchFilter = search
       ? {
         OR: [
           {
@@ -133,6 +138,10 @@ class UsersRepository implements IUsersRepository {
         ]
       }
       : undefined;
+
+    const whereClause = searchFilter
+      ? { AND: [baseFilter, searchFilter] }
+      : baseFilter;
     const orderByClause = orderBy
       ? {
         [orderBy.field]: orderBy.direction
@@ -140,26 +149,31 @@ class UsersRepository implements IUsersRepository {
       : {
         name: 'asc' as const
       };
-
     const [users, total] = await Promise.all([
       prisma.users.findMany({
         skip: offset,
         take,
         where: whereClause,
         orderBy: orderByClause,
-        omit: {
-          deletedAt: true,
-          updatedAt: true,
-          createdAt: true,
-          createdById: true,
-          updatedById: true,
-          deletedById: true,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          birthDate: true,
+          contact: true,
+          nationalId: true,
+          password: true,
+          token: true,
+          isDeleted: true,
         }
       }),
       prisma.users.count({ where: whereClause }) as Promise<number>
     ]);
 
     const totalPages = Math.ceil(total / take);
+    console.log("Total", total)
+    console.log("take", take)
+    console.log("Total pages", totalPages)
 
     return {
       data: users,
