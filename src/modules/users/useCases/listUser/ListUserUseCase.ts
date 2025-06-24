@@ -15,14 +15,14 @@ class ListUserUseCase {
         private usersRepoitory: IUsersRepository,
     ) { }
     async execute(request: IRequestWithPagination): Promise<{data: IUserDTO[]; total: number; totalPages: number}> {
-        const { page = 1, take = 5 } = request;
+        const { page = 1, take = 5, search = "" } = request;
         console.log("Request", request)
         console.log("Page e take", page, take)
         const users = await this.usersRepoitory.list({
             page,
             take,
             orderBy: request.orderBy,
-            search: request.search
+            search
         });
         return users;
     }
