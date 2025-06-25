@@ -69,7 +69,6 @@ class UsersRepository implements IUsersRepository {
       updatedAt: new Date(),
       isDeleted: false,
     }
-    console.log("User update", user)
     return await prisma.users.update({
       where: { id },
       data: {
@@ -96,8 +95,6 @@ class UsersRepository implements IUsersRepository {
           }
         },
       });
-
-      console.log("Usuário marcado como deletado com sucesso:", deletedUser);
     } catch (error) {
       console.error("Erro ao tentar deletar usuário:", error);
       throw error; // relança o erro, se você quiser tratar em outro lugar também
@@ -171,10 +168,6 @@ class UsersRepository implements IUsersRepository {
     ]);
 
     const totalPages = Math.ceil(total / take);
-    console.log("Total", total)
-    console.log("take", take)
-    console.log("Total pages", totalPages)
-
     return {
       data: users,
       total,
@@ -187,8 +180,6 @@ class UsersRepository implements IUsersRepository {
       where: { id },
       select: { token: true },
     });
-    console.log("User", user)
-
     return user?.token ?? null;
   }
 }
