@@ -144,8 +144,9 @@ class UsersRepository implements IUsersRepository {
         [orderBy.field]: orderBy.direction
       }
       : {
-        name: 'asc' as const
+        createdAt: 'asc' as const
       };
+      console.log("Ordenando por:", orderByClause);
     const [users, total] = await Promise.all([
       prisma.users.findMany({
         skip: offset,
@@ -175,7 +176,6 @@ class UsersRepository implements IUsersRepository {
     };
   };
   async findTokenById(id: string): Promise<string | null> {
-    console.log("Id", id)
     const user = await prisma.users.findUnique({
       where: { id },
       select: { token: true },

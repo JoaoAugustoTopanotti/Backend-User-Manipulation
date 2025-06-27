@@ -13,11 +13,16 @@ class ListUserController {
             'orderBy[direction]'?: string;
         }
 
+        const field = query['orderBy[field]'];
+        const direction = query['orderBy[direction]'];
+
+        const isValidDirection = direction === 'asc' || direction === 'desc';
+
         const orderBy: OrderBy | undefined =
-            query['orderBy[field]'] && query['orderBy[direction]']
+            field && isValidDirection
                 ? {
-                    field: query['orderBy[field]'],
-                    direction: query['orderBy[direction]'] as 'asc' | 'desc',
+                    field,
+                    direction,
                 }
                 : undefined;
 
@@ -27,7 +32,7 @@ class ListUserController {
             search: query.search,
             orderBy
         }
-
+        console.log("Params", params)
         const listUserUseCase = container.resolve(ListUserUseCase);
 
         const users = await listUserUseCase.execute(params);
