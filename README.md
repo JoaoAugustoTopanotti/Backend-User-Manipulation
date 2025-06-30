@@ -29,8 +29,8 @@ Para instalação, é necessário ter os seguintes itens instalados:
 
 #### Passo 1 - Clone o repositório
 
-` https://github.com/JoaoAugustoTopanotti/Backed-User-Manipulation.git ` <br> <br>
-` cd Backed-User-Manipulation `
+` https://github.com/JoaoAugustoTopanotti/Backend-User-Manipulation.git ` <br> <br>
+` cd Backend-User-Manipulation `
 
 #### Passo 2 - Instale as dependências
 
