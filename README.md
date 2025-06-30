@@ -18,14 +18,14 @@ A API oferece os seguintes métodos para manipulação de usuários:
 
 ## Guia para Instalação
 
-### Pré-requisitos
+### 📌 Pré-requisitos
 
 Para instalação, é necessário ter os seguintes itens instalados:
 - [Node.js](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 
-### Passos para instalação
+### 📌 Passos para instalação
 
 #### Passo 1 - Clone o repositório
 
@@ -52,4 +52,4 @@ Para instalação, é necessário ter os seguintes itens instalados:
 
 ` yarn dev `
 
-Continue o guia de instalação por [aqui](https://github.com/JoaoAugustoTopanotti/Frontend-User-Manipulation/edit/main/README.md).
+Continue o guia de instalação por [aqui](https://github.com/JoaoAugustoTopanotti/Frontend-User-Manipulation/blob/main/README.md).
