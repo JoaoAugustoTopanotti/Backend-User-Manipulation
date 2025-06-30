@@ -12,13 +12,8 @@ class UpdateUserUseCase {
         private usersRepository: IUsersRepository,
     ) { }
     async execute(updatedUser: UpdateUserDTO, token: string, updatedById: string, id: string): Promise<UserEntity> {
-        console.log("updatedUser", updatedUser)
-        console.log("token", token)
-        console.log("updatedById", updatedById)
-        console.log("id", id)
         
         const userId = await this.usersRepository.findById(id);
-        console.log("userId", userId)
         const valueToCompare = {
             id: userId.id,
             name: userId.name,
@@ -30,8 +25,6 @@ class UpdateUserUseCase {
         if (isEqualObjects(updatedUser, valueToCompare)) {
         throw new Error("No changes were made to the user data.");
     }
-        console.log("Value to compare: ", valueToCompare)
-        console.log("Updated user: ", updatedUser)
         const user = await this.usersRepository.update(updatedUser, token, updatedById, id);
         return user;
     }

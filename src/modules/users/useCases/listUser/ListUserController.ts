@@ -32,7 +32,6 @@ class ListUserController {
             search: query.search,
             orderBy
         }
-        console.log("Params", params)
         const listUserUseCase = container.resolve(ListUserUseCase);
 
         const users = await listUserUseCase.execute(params);

@@ -146,7 +146,6 @@ class UsersRepository implements IUsersRepository {
       : {
         createdAt: 'asc' as const
       };
-      console.log("Ordenando por:", orderByClause);
     const [users, total] = await Promise.all([
       prisma.users.findMany({
         skip: offset,
