@@ -24,6 +24,7 @@ Para instalação, é necessário ter os seguintes itens instalados:
 - [Node.js](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Typescript](https://www.typescriptlang.org/)
 
 ### 📌 Passos para instalação
 
