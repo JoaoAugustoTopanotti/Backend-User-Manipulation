@@ -42,7 +42,7 @@ Para instalação, é necessário ter os seguintes itens instalados:
 ` DATABASE_URL="postgresql://usuario:senha@localhost:5432/nomedobanco?schema=public" `
 
 #### Passo 4 - Instale o Prisma e rode as migrations
-` prisma --save-dev `
+` prisma --save-dev ` <br> <br>
 ` yarn prisma migrate dev `
 
 #### Passo 5 - Popule o banco com a seed
